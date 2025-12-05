@@ -41,8 +41,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="bg-primary text-primary-foreground py-2 px-4 text-xs">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1"><Phone size={12} /> +880 1700-000000</span>
-            <span className="hidden sm:flex items-center gap-1"><MapPin size={12} /> Dhaka, Bangladesh</span>
+            <span className="flex items-center gap-1"><Phone size={12} /> +254 724 810412</span>
+            <span className="hidden sm:flex items-center gap-1"><MapPin size={12} />  Roysambu, Nairobi </span>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -88,10 +88,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold font-serif text-xl">
-                R
+                DF
               </div>
               <span className="font-serif text-xl font-bold hidden sm:inline-block text-primary">
-                {language === 'bn' ? 'রুবেল উডওয়ার্কস' : 'Rubel Woodworks'}
+                {language === 'bn' ? 'রুবেল উডওয়ার্কস' : 'Decorvibe Furniture'}
               </span>
             </div>
           </Link>
@@ -158,7 +158,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <h3 className="font-serif text-lg font-bold text-foreground">
-                {language === 'bn' ? 'রুবেল উডওয়ার্কস' : 'Rubel Woodworks'}
+                {language === 'bn' ? 'রুবেল উডওয়ার্কস' : 'Decorvibe Furniture'}
               </h3>
               <p className="text-sm leading-relaxed">
                 {language === 'bn' 
@@ -178,8 +178,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="font-bold mb-4 text-foreground">{t('contact')}</h4>
               <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2"><MapPin size={16} /> 123, Dhaka, Bangladesh</li>
-                <li className="flex items-center gap-2"><Phone size={16} /> +880 1700-000000</li>
+                <li className="flex items-center gap-2"><MapPin size={16} /> 123,  Roysambu, Nairobi </li>
+                <li className="flex items-center gap-2"><Phone size={16} /> +254 724 810412</li>
               </ul>
             </div>
             <div>
@@ -191,7 +191,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="border-t mt-12 pt-8 text-center text-sm">
-            &copy; 2025 Rubel Woodworks. All rights reserved.
+            &copy; 2025 Decorvibe Furniture. All rights reserved.
           </div>
         </div>
       </footer>

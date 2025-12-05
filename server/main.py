@@ -8,7 +8,7 @@ from auth import get_password_hash
 from routers import products, auth, orders, users
 
 # Initialize FastAPI app FIRST
-app = FastAPI(title="Rubel Woodworks API")
+app = FastAPI(title="Decorvibe Furniture API")
 
 # CORS Configuration - MUST BE RIGHT AFTER APP INIT
 app.add_middleware(
@@ -42,7 +42,7 @@ if os.getenv("NODE_ENV") == "production":
 # Root endpoint
 @app.get("/")
 def root():
-    return {"message": "Welcome to Rubel Woodworks API"}
+    return {"message": "Welcome to Decorvibe Furniture API"}
 
 # Create default admin user on startup
 @app.on_event("startup")

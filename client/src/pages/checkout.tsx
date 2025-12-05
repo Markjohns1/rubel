@@ -73,7 +73,7 @@ export default function Checkout() {
   const generateWhatsAppLink = () => {
     const itemList = items.map(i => `- ${i.nameEn} x${i.quantity}`).join('\n');
     const text = `New Order:\n${itemList}\n\nTotal: ${cartTotal + 500}`;
-    return `https://wa.me/+8801700000000?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/+254 724 810412?text=${encodeURIComponent(text)}`;
   };
 
   return (

@@ -62,7 +62,7 @@ export const translations: Translations = {
   status: { bn: 'অবস্থা', en: 'Status' },
   
   // Common
-  taka: { bn: '৳', en: '৳' },
+  taka: { bn: '$', en: '$' },
 };
 
 interface LanguageContextType {

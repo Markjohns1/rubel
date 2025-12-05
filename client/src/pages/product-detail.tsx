@@ -49,7 +49,7 @@ export default function ProductDetail() {
 
   // WhatsApp Message
   const whatsappMessage = `Hi, I want to order: ${product.nameEn} - Price: ${product.price}`;
-  const whatsappLink = `https://wa.me/+8801700000000?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappLink = `https://wa.me/+254 724 810412?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
     <div className="container mx-auto px-4 py-8">

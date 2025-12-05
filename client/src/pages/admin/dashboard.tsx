@@ -47,7 +47,7 @@ export default function AdminDashboard() {
   const stats = [
     { 
       title: "Total Revenue", 
-      value: statsData ? `৳ ${statsData.total_sales.toLocaleString()}` : "Loading...", 
+      value: statsData ? `$ ${statsData.total_sales.toLocaleString()}` : "Loading...", 
       icon: DollarSign 
     },
     { 
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
                           {order.status}
                         </span>
                       </td>
-                      <td className="p-4">৳ {order.total_amount.toLocaleString()}</td>
+                      <td className="p-4">$ {order.total_amount.toLocaleString()}</td>
                     </tr>
                   ))
                 )}

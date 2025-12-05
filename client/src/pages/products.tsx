@@ -89,7 +89,7 @@ export default function Products() {
         <div className="text-center py-16 bg-muted/20 rounded-lg border border-destructive/20">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-bold text-destructive mb-2">Connection Error</h2>
-          <p className="text-muted-foreground">Could not connect to your FastAPI backend.</p>
+          <p className="text-muted-foreground">Could not make it to your server 😔 .</p>
         </div>
       ) : displayProducts.length > 0 ? (
         <>

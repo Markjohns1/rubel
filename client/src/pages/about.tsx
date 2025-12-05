@@ -20,7 +20,7 @@ export default function About() {
             <h2 className="text-3xl font-serif font-bold text-primary">Our Story</h2>
             <div className="space-y-4 text-muted-foreground text-lg leading-relaxed">
               <p>
-                Welcome to Rubel Woodworks, where tradition meets modern craftsmanship. Established in 2010, we started as a small workshop in Dhaka with a simple mission: to create furniture that lasts for generations.
+                Welcome to Decorvibe Furniture, where tradition meets modern craftsmanship. Established in 2010, we started as a small workshop in Dhaka with a simple mission: to create furniture that lasts for generations.
               </p>
               <p>
                 Over the years, we have grown into one of the most trusted names in the local furniture industry. We specialize in premium teak wood furniture that combines durability with aesthetic elegance.
