@@ -45,6 +45,11 @@ export interface LoginResponse {
   isAdmin: boolean;
 }
 
+export interface RegisterRequest {
+  username: string;
+  password: string;
+}
+
 export interface Order {
   id: number;
   customer_name: string;
@@ -175,6 +180,12 @@ export const api = {
       }
 
       return res.json();
+    },
+    register: async (data: RegisterRequest): Promise<LoginResponse> => {
+      return fetchJson<LoginResponse>("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
     me: () => fetchJson<User>("/auth/me"),
   },

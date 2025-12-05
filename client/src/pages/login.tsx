@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useState } from "react";
 
 const loginSchema = z.object({
@@ -33,8 +33,7 @@ export default function Login() {
       await login(data.username, data.password);
       setLocation('/admin');
     } catch (err) {
-      // Error is handled in auth context toast, but we can also show inline
-      setError("Login failed. Check backend connection.");
+      setError("Login failed. Check your credentials and backend connection.");
     }
   };
 
@@ -54,19 +53,28 @@ export default function Login() {
               <Input id="username" {...register("username")} placeholder="rubel" />
               {errors.username && <p className="text-destructive text-sm">{errors.username.message}</p>}
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} placeholder="rubel11" />
+              <Input id="password" type="password" {...register("password")} placeholder="••••••••" />
               {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
             </div>
             
-            {error && <div className="text-destructive text-sm text-center">{error}</div>}
+            {error && (
+              <div className="text-destructive text-sm text-center bg-destructive/10 p-3 rounded">
+                {error}
+              </div>
+            )}
             
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? "Logging in..." : t('login')}
             </Button>
+
             <div className="text-center text-sm text-muted-foreground mt-4">
-               <p>Requires running backend at /api/auth/login</p>
+              Don't have an account?{" "}
+              <Link href="/register">
+                <a className="text-primary hover:underline font-medium">Register here</a>
+              </Link>
             </div>
           </form>
         </CardContent>

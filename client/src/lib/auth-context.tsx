@@ -2,9 +2,13 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 import { api, User } from './api';
 import { useToast } from '@/hooks/use-toast';
 
+export type UserRole = 'guest' | 'user' | 'admin';
+
 interface AuthContextType {
   user: User | null;
+  role: UserRole;
   login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -16,14 +20,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
+  // Determine user role
+  const role: UserRole = user ? (user.isAdmin ? 'admin' : 'user') : 'guest';
+
   // Check for existing token on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      // In a real app, validate token with backend
-      // api.auth.me().then(setUser).catch(() => logout());
-      
-      // For now, just hydrate from storage if we saved user info
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
         setUser(JSON.parse(savedUser));
@@ -40,16 +43,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         username: response.username,
         isAdmin: response.isAdmin
       };
-
+      
       localStorage.setItem("token", response.access_token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
       
-      toast({ title: "Welcome back!" });
+      toast({ 
+        title: "Welcome back!", 
+        description: `Logged in as ${response.isAdmin ? 'Admin' : 'User'}` 
+      });
     } catch (error) {
       toast({ 
         title: "Login failed", 
-        description: "Please check your credentials (backend might be offline)",
+        description: "Please check your credentials.",
+        variant: "destructive" 
+      });
+      throw error;
+    }
+  };
+
+  const register = async (username: string, password: string) => {
+    try {
+      const response = await api.auth.register({ username, password });
+      
+      const userData = {
+        username: response.username,
+        isAdmin: response.isAdmin
+      };
+      
+      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+      
+      toast({ 
+        title: "Account created!", 
+        description: "Welcome to our furniture store" 
+      });
+    } catch (error: any) {
+      const message = error.message || "Registration failed";
+      toast({ 
+        title: "Registration failed", 
+        description: message,
         variant: "destructive" 
       });
       throw error;
@@ -60,11 +94,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    toast({ title: "Logged out" });
+    toast({ title: "Logged out successfully" });
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, role, login, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

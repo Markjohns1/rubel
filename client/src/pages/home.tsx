@@ -1,5 +1,7 @@
 import { useLanguage } from "@/lib/language-context";
+import { useAuth } from "@/lib/auth-context";
 import { ProductCard } from "@/components/ui/product-card";
+import { GuestPrompt } from "@/components/GuestPrompt";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Link } from "wouter";
@@ -12,6 +14,7 @@ import imgLivingRoom from '@assets/generated_images/modern_elegant_living_room_w
 
 export default function Home() {
   const { t } = useLanguage();
+  const { role } = useAuth();
   
   // Fetch products from real API
   const { data: products, isLoading, error } = useQuery({
@@ -20,7 +23,10 @@ export default function Home() {
     retry: false // Don't retry infinitely if backend is down
   });
 
-  const featuredProducts = products?.slice(0, 4) || [];
+  // Guests see only 4 products, logged-in users see all
+  const displayProducts = role === 'guest' 
+    ? products?.slice(0, 4) || [] 
+    : products?.slice(0, 4) || [];
 
   return (
     <div className="space-y-16 pb-16">
@@ -66,6 +72,9 @@ export default function Home() {
 
       {/* Featured Products */}
       <section className="container mx-auto px-4">
+        {/* Guest Prompt */}
+        <GuestPrompt />
+
         <div className="flex justify-between items-end mb-8">
           <div>
             <h2 className="text-3xl font-serif font-bold text-primary mb-2">{t('featuredProducts')}</h2>
@@ -93,11 +102,24 @@ export default function Home() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {displayProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+            
+            {role === 'guest' && products && products.length > 4 && (
+              <div className="mt-8 text-center p-6 bg-muted/30 rounded-lg border border-dashed">
+                <p className="text-muted-foreground mb-4">
+                  {products.length - 4} more products available. Login to view all.
+                </p>
+                <Link href="/login">
+                  <Button>Login to See More</Button>
+                </Link>
+              </div>
+            )}
+          </>
         )}
 
         <div className="mt-8 text-center sm:hidden">
