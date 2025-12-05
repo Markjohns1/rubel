@@ -1,5 +1,4 @@
 import { Link, useLocation } from "wouter";
-import { useLanguage } from "@/lib/language-context";
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { ShoppingCart, Menu, User, Phone, Facebook, Instagram, MapPin, LogOut } from "lucide-react";
@@ -15,7 +14,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { t, language, setLanguage } = useLanguage();
   const { cartCount } = useCart();
   const { user, logout } = useAuth();
   const [location] = useLocation();
@@ -42,22 +40,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1"><Phone size={12} /> +254 724 810412</span>
-            <span className="hidden sm:flex items-center gap-1"><MapPin size={12} />  Roysambu, Nairobi </span>
+            <span className="hidden sm:flex items-center gap-1"><MapPin size={12} /> Roysambu, Nairobi</span>
           </div>
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setLanguage('bn')} 
-              className={cn("hover:underline", language === 'bn' && "font-bold")}
-            >
-              বাংলা
-            </button>
-            <span>|</span>
-            <button 
-              onClick={() => setLanguage('en')} 
-              className={cn("hover:underline", language === 'en' && "font-bold")}
-            >
-              English
-            </button>
+          <div className="flex items-center gap-2 text-xs">
+            <span>Welcome to Decorvibe Furniture</span>
           </div>
         </div>
       </div>
@@ -75,10 +61,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">{t('home')}</Link>
-                  <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">{t('products')}</Link>
-                  <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">{t('about')}</Link>
-                  <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">{t('contact')}</Link>
+                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">Home</Link>
+                  <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">Products</Link>
+                  <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">About Us</Link>
+                  <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium">Contact</Link>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -91,17 +77,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 DF
               </div>
               <span className="font-serif text-xl font-bold hidden sm:inline-block text-primary">
-                {language === 'bn' ? 'রুবেল উডওয়ার্কস' : 'Decorvibe Furniture'}
+                Decorvibe Furniture
               </span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            <NavLink href="/">{t('home')}</NavLink>
-            <NavLink href="/products">{t('products')}</NavLink>
-            <NavLink href="/about">{t('about')}</NavLink>
-            <NavLink href="/contact">{t('contact')}</NavLink>
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="/products">Products</NavLink>
+            <NavLink href="/about">About Us</NavLink>
+            <NavLink href="/contact">Contact</NavLink>
           </nav>
 
           {/* Actions */}
@@ -126,17 +112,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                     <Link href={user.isAdmin ? "/admin" : "/profile"}>{user.isAdmin ? t('admin') : user.username}</Link>
+                    <Link href={user.isAdmin ? "/admin" : "/profile"}>{user.isAdmin ? "Admin" : user.username}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout} className="text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" /> {t('logout')}
+                    <LogOut className="mr-2 h-4 w-4" /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/login">
                 <Button variant="default" size="sm" className="ml-2 hidden sm:flex">
-                  {t('login')}
+                  Login
                 </Button>
                 <Button variant="ghost" size="icon" className="sm:hidden">
                   <User className="h-5 w-5" />
@@ -158,27 +144,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <h3 className="font-serif text-lg font-bold text-foreground">
-                {language === 'bn' ? 'রুবেল উডওয়ার্কস' : 'Decorvibe Furniture'}
+                Decorvibe Furniture
               </h3>
               <p className="text-sm leading-relaxed">
-                {language === 'bn' 
-                  ? 'আধুনিক এবং টেকসই আসবাবপত্রের জন্য আপনার বিশ্বস্ত সঙ্গী। আমরা দিচ্ছি সেরা মানের নিশ্চয়তা।' 
-                  : 'Your trusted partner for modern and durable furniture. We guarantee the best quality.'}
+                Your trusted partner for modern and durable furniture. We guarantee the best quality and craftsmanship.
               </p>
             </div>
             <div>
-              <h4 className="font-bold mb-4 text-foreground">{t('products')}</h4>
+              <h4 className="font-bold mb-4 text-foreground">Products</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/products?cat=door" className="hover:text-primary">Door</Link></li>
-                <li><Link href="/products?cat=bed" className="hover:text-primary">Bed</Link></li>
-                <li><Link href="/products?cat=sofa" className="hover:text-primary">Sofa</Link></li>
-                <li><Link href="/products?cat=cupboard" className="hover:text-primary">Cupboard</Link></li>
+                <li><Link href="/products?cat=door" className="hover:text-primary">Doors</Link></li>
+                <li><Link href="/products?cat=bed" className="hover:text-primary">Beds</Link></li>
+                <li><Link href="/products?cat=sofa" className="hover:text-primary">Sofas</Link></li>
+                <li><Link href="/products?cat=cupboard" className="hover:text-primary">Cupboards</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4 text-foreground">{t('contact')}</h4>
+              <h4 className="font-bold mb-4 text-foreground">Contact</h4>
               <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2"><MapPin size={16} /> 123,  Roysambu, Nairobi </li>
+                <li className="flex items-center gap-2"><MapPin size={16} /> Roysambu, Nairobi</li>
                 <li className="flex items-center gap-2"><Phone size={16} /> +254 724 810412</li>
               </ul>
             </div>

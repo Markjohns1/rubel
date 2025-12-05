@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLanguage } from "@/lib/language-context";
 import { useAuth } from "@/lib/auth-context";
 import { ProductCard } from "@/components/ui/product-card";
 import { GuestPrompt } from "@/components/GuestPrompt";
@@ -11,7 +10,6 @@ import { api } from "@/lib/api";
 import { Link } from "wouter";
 
 export default function Products() {
-  const { t, language } = useLanguage();
   const { role } = useAuth();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
@@ -46,7 +44,7 @@ export default function Products() {
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-primary">{t('allProducts')}</h1>
+          <h1 className="text-3xl font-serif font-bold text-primary">All Products</h1>
           <p className="text-muted-foreground mt-1">
             {role === 'guest' 
               ? `Showing ${displayProducts.length} of ${filteredProducts.length} products`
@@ -58,7 +56,7 @@ export default function Products() {
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={t('search')}
+              placeholder="Search..."
               className="pl-8"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -89,7 +87,7 @@ export default function Products() {
         <div className="text-center py-16 bg-muted/20 rounded-lg border border-destructive/20">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-bold text-destructive mb-2">Connection Error</h2>
-          <p className="text-muted-foreground">Could not make it to your server 😔 .</p>
+          <p className="text-muted-foreground">Could not connect to your FastAPI backend.</p>
         </div>
       ) : displayProducts.length > 0 ? (
         <>

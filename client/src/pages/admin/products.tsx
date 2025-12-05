@@ -1,9 +1,9 @@
 import { useAuth } from "@/lib/auth-context";
-import { useLanguage } from "@/lib/language-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Link, useLocation } from "wouter";
 import { Plus, Pencil, Trash2, Search, ArrowLeft, X, Upload, AlertCircle } from "lucide-react";
 import { useState, useRef } from "react";
@@ -14,28 +14,23 @@ import { api, ProductCreateData, Product } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ProductFormState {
-  nameEn: string;
-  nameBn: string;
+  name: string;
   price: number | string;
-  descriptionEn: string;
-  descriptionBn: string;
+  description: string;
   category: string;
   imageFile: File | null;
 }
 
 const initialFormState: ProductFormState = {
-  nameEn: '',
-  nameBn: '',
+  name: '',
   price: '',
-  descriptionEn: '',
-  descriptionBn: '',
+  description: '',
   category: 'bed',
   imageFile: null,
 };
 
 export default function AdminProducts() {
   const { user } = useAuth();
-  const { t, language } = useLanguage();
   const [, setLocation] = useLocation();
   const [search, setSearch] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -43,7 +38,7 @@ export default function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // Form State
   const [formData, setFormData] = useState<ProductFormState>(initialFormState);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -106,8 +101,7 @@ export default function AdminProducts() {
   };
 
   const filteredProducts = products?.filter((product) =>
-    product.nameEn.toLowerCase().includes(search.toLowerCase()) ||
-    product.nameBn.includes(search)
+    product.nameEn.toLowerCase().includes(search.toLowerCase())
   ) || [];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,11 +116,9 @@ export default function AdminProducts() {
   const handleEditClick = (product: Product) => {
     setEditingProduct(product);
     setFormData({
-      nameEn: product.nameEn,
-      nameBn: product.nameBn,
+      name: product.nameEn,
       price: product.price,
-      descriptionEn: product.descriptionEn || '',
-      descriptionBn: product.descriptionBn || '',
+      description: product.descriptionEn || '',
       category: product.category,
       imageFile: null,
     });
@@ -135,21 +127,21 @@ export default function AdminProducts() {
   };
 
   const handleAddProduct = () => {
-    if (!formData.nameEn || !formData.nameBn || !formData.price || !formData.category || !formData.imageFile) {
+    if (!formData.name || !formData.price || !formData.category || !formData.imageFile) {
       toast({
         title: "Error",
-        description: "Please fill in all fields and upload an image",
+        description: "Please fill in all required fields and upload an image",
         variant: "destructive"
       });
       return;
     }
 
     const productData: ProductCreateData = {
-      nameBn: formData.nameBn,
-      nameEn: formData.nameEn,
+      nameBn: formData.name, // Use same name for both
+      nameEn: formData.name,
       price: Number(formData.price),
-      descriptionBn: formData.descriptionBn,
-      descriptionEn: formData.descriptionEn,
+      descriptionBn: formData.description,
+      descriptionEn: formData.description,
       category: formData.category,
       image: formData.imageFile,
     };
@@ -161,11 +153,11 @@ export default function AdminProducts() {
     if (!editingProduct) return;
 
     const updateData: any = {
-      nameEn: formData.nameEn,
-      nameBn: formData.nameBn,
+      nameEn: formData.name,
+      nameBn: formData.name, // Use same name for both
       price: Number(formData.price),
-      descriptionEn: formData.descriptionEn,
-      descriptionBn: formData.descriptionBn,
+      descriptionEn: formData.description,
+      descriptionBn: formData.description,
       category: formData.category,
     };
 
@@ -184,53 +176,43 @@ export default function AdminProducts() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold font-serif">{t('manageProducts')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-serif">Manage Products</h1>
         <div className="sm:ml-auto w-full sm:w-auto">
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button className="w-full sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" /> {t('addProduct')}
+                <Plus className="mr-2 h-4 w-4" /> Add Product
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{t('addProduct')}</DialogTitle>
+                <DialogTitle>Add New Product</DialogTitle>
               </DialogHeader>
-              
+
               <div className="grid gap-6 py-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Name (English)</Label>
-                    <Input 
-                      placeholder="Modern Bed"
-                      value={formData.nameEn}
-                      onChange={e => setFormData(prev => ({ ...prev, nameEn: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Name (Bengali)</Label>
-                    <Input 
-                      placeholder="আধুনিক খাট"
-                      value={formData.nameBn}
-                      onChange={e => setFormData(prev => ({ ...prev, nameBn: e.target.value }))}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Product Name *</Label>
+                  <Input
+                    placeholder="Modern Bed"
+                    value={formData.name}
+                    onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Price</Label>
-                    <Input 
-                      type="number" 
+                    <Label>Price *</Label>
+                    <Input
+                      type="number"
                       placeholder="25000"
                       value={formData.price}
                       onChange={e => setFormData(prev => ({ ...prev, price: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Category</Label>
-                    <Select 
-                      onValueChange={(val) => setFormData(prev => ({ ...prev, category: val }))} 
+                    <Label>Category *</Label>
+                    <Select
+                      onValueChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
                       value={formData.category}
                     >
                       <SelectTrigger>
@@ -247,37 +229,28 @@ export default function AdminProducts() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Description (English)</Label>
-                    <Input 
-                      placeholder="Product details..."
-                      value={formData.descriptionEn}
-                      onChange={e => setFormData(prev => ({ ...prev, descriptionEn: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description (Bengali)</Label>
-                    <Input 
-                      placeholder="পণ্যের বিবরণ..."
-                      value={formData.descriptionBn}
-                      onChange={e => setFormData(prev => ({ ...prev, descriptionBn: e.target.value }))}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    placeholder="Product details and features..."
+                    rows={4}
+                    value={formData.description}
+                    onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Product Image</Label>
-                  <div 
+                  <Label>Product Image *</Label>
+                  <div
                     className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {previewImage ? (
                       <div className="relative w-full h-48">
                         <img src={previewImage} alt="Preview" className="w-full h-full object-contain" />
-                        <Button 
-                          variant="destructive" 
-                          size="icon" 
+                        <Button
+                          variant="destructive"
+                          size="icon"
                           className="absolute top-2 right-2"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -297,10 +270,10 @@ export default function AdminProducts() {
                         <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</p>
                       </>
                     )}
-                    <input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
                       accept="image/*"
                       onChange={handleImageUpload}
                     />
@@ -326,8 +299,8 @@ export default function AdminProducts() {
       <div className="flex justify-between items-center mb-6">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search products..." 
+          <Input
+            placeholder="Search products..."
             className="pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -342,41 +315,41 @@ export default function AdminProducts() {
               <thead className="bg-muted/50">
                 <tr>
                   <th className="p-4 font-medium w-[80px]">Image</th>
-                  <th className="p-4 font-medium">{t('productName')}</th>
-                  <th className="p-4 font-medium">{t('category')}</th>
-                  <th className="p-4 font-medium">{t('productPrice')}</th>
-                  <th className="p-4 font-medium text-right">{t('actions')}</th>
+                  <th className="p-4 font-medium">Product Name</th>
+                  <th className="p-4 font-medium">Category</th>
+                  <th className="p-4 font-medium">Price</th>
+                  <th className="p-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredProducts.map((product) => (
+                {filteredProducts.map((product) => {
+                  // Ensure image URL is absolute
+                  const imageUrl = product.image.startsWith('http') 
+                    ? product.image 
+                    : `http://localhost:8000${product.image}`;
+                  
+                  return (
                   <tr key={product.id} className="border-t hover:bg-muted/20 transition-colors">
                     <td className="p-4">
                       <div className="w-10 h-10 rounded bg-muted overflow-hidden">
-                        <img src={product.image} alt="" className="w-full h-full object-cover" />
+                        <img src={imageUrl} alt="" className="w-full h-full object-cover" />
                       </div>
                     </td>
-                    <td className="p-4 font-medium">
-                      {language === 'bn' ? product.nameBn : product.nameEn}
-                    </td>
-                    <td className="p-4 capitalize text-muted-foreground">
-                      {product.category}
-                    </td>
-                    <td className="p-4">
-                      {t('taka')} {product.price.toLocaleString()}
-                    </td>
+                    <td className="p-4 font-medium">{product.nameEn}</td>
+                    <td className="p-4 capitalize text-muted-foreground">{product.category}</td>
+                    <td className="p-4">${product.price.toLocaleString()}</td>
                     <td className="p-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="ghost"
                           size="icon"
                           onClick={() => handleEditClick(product)}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                           onClick={() => deleteMutation.mutate(product.id)}
                           disabled={deleteMutation.isPending}
@@ -386,7 +359,8 @@ export default function AdminProducts() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
                 {filteredProducts.length === 0 && !error && (
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-muted-foreground">
@@ -412,41 +386,31 @@ export default function AdminProducts() {
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
           </DialogHeader>
-          
+
           <div className="grid gap-6 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Name (English)</Label>
-                <Input 
-                  placeholder="Modern Bed"
-                  value={formData.nameEn}
-                  onChange={e => setFormData(prev => ({ ...prev, nameEn: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Name (Bengali)</Label>
-                <Input 
-                  placeholder="আধুনিক খাট"
-                  value={formData.nameBn}
-                  onChange={e => setFormData(prev => ({ ...prev, nameBn: e.target.value }))}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label>Product Name *</Label>
+              <Input
+                placeholder="Modern Bed"
+                value={formData.name}
+                onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Price</Label>
-                <Input 
-                  type="number" 
+                <Label>Price *</Label>
+                <Input
+                  type="number"
                   placeholder="25000"
                   value={formData.price}
                   onChange={e => setFormData(prev => ({ ...prev, price: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Category</Label>
-                <Select 
-                  onValueChange={(val) => setFormData(prev => ({ ...prev, category: val }))} 
+                <Label>Category *</Label>
+                <Select
+                  onValueChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
                   value={formData.category}
                 >
                   <SelectTrigger>
@@ -463,37 +427,28 @@ export default function AdminProducts() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Description (English)</Label>
-                <Input 
-                  placeholder="Product details..."
-                  value={formData.descriptionEn}
-                  onChange={e => setFormData(prev => ({ ...prev, descriptionEn: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Description (Bengali)</Label>
-                <Input 
-                  placeholder="পণ্যের বিবরণ..."
-                  value={formData.descriptionBn}
-                  onChange={e => setFormData(prev => ({ ...prev, descriptionBn: e.target.value }))}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea
+                placeholder="Product details and features..."
+                rows={4}
+                value={formData.description}
+                onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Product Image (leave empty to keep current)</Label>
-              <div 
+              <div
                 className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
                 {previewImage ? (
                   <div className="relative w-full h-48">
                     <img src={previewImage} alt="Preview" className="w-full h-full object-contain" />
-                    <Button 
-                      variant="destructive" 
-                      size="icon" 
+                    <Button
+                      variant="destructive"
+                      size="icon"
                       className="absolute top-2 right-2"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -513,10 +468,10 @@ export default function AdminProducts() {
                     <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</p>
                   </>
                 )}
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  className="hidden" 
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
                   accept="image/*"
                   onChange={handleImageUpload}
                 />

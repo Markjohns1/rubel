@@ -1,5 +1,4 @@
 import { useRoute, Link } from "wouter";
-import { useLanguage } from "@/lib/language-context";
 import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +8,9 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
 export default function ProductDetail() {
-  const { t, language } = useLanguage();
   const { addToCart } = useCart();
   const [match, params] = useRoute("/product/:id");
 
-  // Fetch single product
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', params?.id],
     queryFn: () => api.products.get(Number(params?.id)),
@@ -22,7 +19,7 @@ export default function ProductDetail() {
   });
 
   if (!match) return <NotFound />;
-  
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-20 flex justify-center">
@@ -44,27 +41,28 @@ export default function ProductDetail() {
     );
   }
 
-  const name = language === 'bn' ? product.nameBn : product.nameEn;
-  const description = language === 'bn' ? product.descriptionBn : product.descriptionEn;
+  // Ensure image URL is absolute
+  const imageUrl = product.image.startsWith('http') 
+    ? product.image 
+    : `http://localhost:8000${product.image}`;
 
-  // WhatsApp Message
   const whatsappMessage = `Hi, I want to order: ${product.nameEn} - Price: ${product.price}`;
-  const whatsappLink = `https://wa.me/+254 724 810412?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappLink = `https://wa.me/+254724810412?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <Link href="/products">
         <Button variant="ghost" className="mb-6 pl-0 hover:pl-2 transition-all">
-          <ArrowLeft className="mr-2 h-4 w-4" /> {t('allProducts')}
+          <ArrowLeft className="mr-2 h-4 w-4" /> All Products
         </Button>
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Image */}
         <div className="aspect-square bg-muted rounded-xl overflow-hidden border relative">
-          <img 
-            src={product.image} 
-            alt={name}
+          <img
+            src={imageUrl}
+            alt={product.nameEn}
             className="w-full h-full object-cover"
           />
         </div>
@@ -73,28 +71,28 @@ export default function ProductDetail() {
         <div className="space-y-8">
           <div>
             <Badge className="mb-4 uppercase tracking-widest">{product.category}</Badge>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">{name}</h1>
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">{product.nameEn}</h1>
             <p className="text-3xl font-bold text-primary">
-              {t('taka')} {product.price.toLocaleString()}
+              ${product.price.toLocaleString()}
             </p>
           </div>
 
           <div className="prose prose-stone max-w-none">
             <h3 className="font-bold text-lg mb-2">Description</h3>
             <p className="text-muted-foreground leading-relaxed text-lg">
-              {description}
+              {product.descriptionEn}
             </p>
             <ul className="list-disc list-inside mt-4 space-y-2 text-muted-foreground">
               <li>Premium solid wood construction</li>
               <li>Hand-polished finish</li>
               <li>5-year warranty included</li>
-              <li>Free delivery within Dhaka city</li>
+              <li>Free delivery within Nairobi</li>
             </ul>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
             <Button size="lg" className="flex-1 text-lg h-14" onClick={() => addToCart(product)}>
-              <ShoppingCart className="mr-2 h-5 w-5" /> {t('addToCart')}
+              <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
             </Button>
             <a href={whatsappLink} target="_blank" rel="noreferrer" className="flex-1">
               <Button size="lg" variant="outline" className="w-full text-lg h-14 border-green-600 text-green-700 hover:bg-green-50">

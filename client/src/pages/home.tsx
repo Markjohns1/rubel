@@ -1,29 +1,24 @@
-import { useLanguage } from "@/lib/language-context";
 import { useAuth } from "@/lib/auth-context";
 import { ProductCard } from "@/components/ui/product-card";
 import { GuestPrompt } from "@/components/GuestPrompt";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { ArrowRight, AlertCircle } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
-// Fallback hero image while backend is being built
 import imgLivingRoom from '@assets/generated_images/modern_elegant_living_room_with_wooden_furniture.png';
 
 export default function Home() {
-  const { t } = useLanguage();
   const { role } = useAuth();
   
-  // Fetch products from real API
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: api.products.list,
-    retry: false // Don't retry infinitely if backend is down
+    retry: false
   });
 
-  // Guests see only 4 products, logged-in users see all
   const displayProducts = role === 'guest' 
     ? products?.slice(0, 4) || [] 
     : products?.slice(0, 4) || [];
@@ -46,7 +41,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight"
           >
-            {t('heroTitle')}
+            Decorate Your Dream Home
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +49,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-white/90"
           >
-            {t('heroSubtitle')}
+            Make your home more attractive with the best quality modern furniture
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -63,7 +58,7 @@ export default function Home() {
           >
             <Link href="/products">
               <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-primary/50">
-                {t('shopNow')} <ArrowRight className="ml-2" />
+                Shop Now <ArrowRight className="ml-2" />
               </Button>
             </Link>
           </motion.div>
@@ -72,17 +67,16 @@ export default function Home() {
 
       {/* Featured Products */}
       <section className="container mx-auto px-4">
-        {/* Guest Prompt */}
         <GuestPrompt />
 
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h2 className="text-3xl font-serif font-bold text-primary mb-2">{t('featuredProducts')}</h2>
+            <h2 className="text-3xl font-serif font-bold text-primary mb-2">Featured Products</h2>
             <div className="h-1 w-20 bg-accent rounded-full"></div>
           </div>
           <Link href="/products">
             <Button variant="outline" className="hidden sm:flex">
-              {t('allProducts')} <ArrowRight className="ml-2 h-4 w-4" />
+              All Products <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -125,13 +119,13 @@ export default function Home() {
         <div className="mt-8 text-center sm:hidden">
           <Link href="/products">
             <Button variant="outline" className="w-full">
-              {t('allProducts')} <ArrowRight className="ml-2 h-4 w-4" />
+              All Products <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
         </div>
       </section>
 
-      {/* Features/Benefits Section (Static) */}
+      {/* Features/Benefits Section */}
       <section className="bg-muted py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
@@ -147,7 +141,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <h3 className="text-xl font-bold mb-2">Local Craftsmanship</h3>
-              <p className="text-muted-foreground">Made in Bangladesh by skilled artisans with decades of experience.</p>
+              <p className="text-muted-foreground">Made in Kenya by skilled artisans with decades of experience.</p>
             </div>
             <div className="p-6 bg-background rounded-lg shadow-sm">
               <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">

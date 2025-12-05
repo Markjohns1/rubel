@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/lib/language-context";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { SessionManager } from "@/components/SessionManager";
 import Layout from "@/components/layout";
 import NotFound from "@/pages/not-found";
 
@@ -74,6 +75,7 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <TooltipProvider>
+              <SessionManager />
               <Router />
               <Toaster />
             </TooltipProvider>
