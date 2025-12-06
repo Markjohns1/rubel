@@ -52,6 +52,7 @@ export interface RegisterRequest {
 
 export interface Order {
   id: number;
+  user_id?: number;
   customer_name: string;
   customer_phone: string;
   customer_address?: string;
@@ -67,6 +68,32 @@ export interface OrderCreate {
   customer_address?: string;
   total_amount: number;
   items: string;
+}
+
+export interface OrderUpdate {
+  status: string;
+}
+
+export interface Review {
+  id: number;
+  product_id: number;
+  user_id: number;
+  username: string;
+  rating: number;
+  comment?: string;
+  is_approved: boolean;
+  created_at: string;
+}
+
+export interface ReviewCreate {
+  product_id: number;
+  rating: number;
+  comment?: string;
+}
+
+export interface ProductRating {
+  average_rating: number;
+  review_count: number;
 }
 
 export interface DashboardStats {
@@ -191,9 +218,33 @@ export const api = {
   },
   orders: {
     list: () => fetchJson<Order[]>("/orders"),
+    myOrders: () => fetchJson<Order[]>("/my-orders"),
     create: (order: OrderCreate) => fetchJson<{ message: string; order_id: number }>("/orders", {
       method: "POST",
       body: JSON.stringify(order),
+    }),
+    updateStatus: (id: number, data: OrderUpdate) => fetchJson<Order>(`/orders/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+    delete: (id: number) => fetchJson<{ message: string }>(`/orders/${id}`, {
+      method: "DELETE",
+    }),
+  },
+  reviews: {
+    getProductReviews: (productId: number) => fetchJson<Review[]>(`/products/${productId}/reviews`),
+    getProductRating: (productId: number) => fetchJson<ProductRating>(`/products/${productId}/rating`),
+    create: (review: ReviewCreate) => fetchJson<Review>("/reviews", {
+      method: "POST",
+      body: JSON.stringify(review),
+    }),
+    list: () => fetchJson<Review[]>("/admin/reviews"),
+    update: (id: number, data: { is_approved: boolean }) => fetchJson<Review>(`/admin/reviews/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+    delete: (id: number) => fetchJson<{ message: string }>(`/admin/reviews/${id}`, {
+      method: "DELETE",
     }),
   },
   stats: {

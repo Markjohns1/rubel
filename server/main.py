@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import models
+from routers import reviews
 from database import engine, SessionLocal
 from auth import get_password_hash
 from routers import products, auth, orders, users
@@ -31,6 +32,7 @@ app.include_router(products.router)
 app.include_router(auth.router)
 app.include_router(orders.router)
 app.include_router(users.router)
+app.include_router(reviews.router)
 
 # Mount frontend static files in production AFTER API routers
 import os

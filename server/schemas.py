@@ -1,4 +1,4 @@
-﻿from pydantic import BaseModel
+﻿from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 from datetime import datetime
@@ -27,7 +27,7 @@ class Product(ProductBase):
     image: str
 
     class Config:
-        from_attributes = True  # Updated from orm_mode for Pydantic v2
+        from_attributes = True
 
 # User Schemas
 class UserLogin(BaseModel):
@@ -78,15 +78,41 @@ class OrderCreate(BaseModel):
     total_amount: float
     items: str  # JSON string of cart items
 
+class OrderUpdate(BaseModel):
+    status: str  # pending, processing, completed, cancelled
+
 class Order(BaseModel):
     id: int
+    user_id: Optional[int] = None
     customer_name: str
     customer_phone: str
     customer_address: Optional[str] = None
     total_amount: float
     items: str
-    status: str = "pending"  # Default status
+    status: str = "pending"
     created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# Review Schemas
+class ReviewCreate(BaseModel):
+    product_id: int
+    rating: int = Field(..., ge=1, le=5, description="Rating must be between 1 and 5")
+    comment: Optional[str] = None
+
+class ReviewUpdate(BaseModel):
+    is_approved: bool
+
+class ReviewResponse(BaseModel):
+    id: int
+    product_id: int
+    user_id: int
+    username: str  # Include username for display
+    rating: int
+    comment: Optional[str] = None
+    is_approved: bool
+    created_at: datetime
 
     class Config:
         from_attributes = True

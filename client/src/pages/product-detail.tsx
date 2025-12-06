@@ -6,6 +6,7 @@ import { ShoppingCart, Phone, ArrowLeft, Loader2, AlertCircle } from "lucide-rea
 import NotFound from "./not-found";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { ReviewSection } from "@/components/ReviewSection";
 
 export default function ProductDetail() {
   const { addToCart } = useCart();
@@ -101,6 +102,11 @@ export default function ProductDetail() {
             </a>
           </div>
         </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-16">
+        <ReviewSection productId={product.id} />
       </div>
     </div>
   );
